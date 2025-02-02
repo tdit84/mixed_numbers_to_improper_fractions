@@ -62,23 +62,69 @@
       font-size: 22px;
       margin: 20px;
     }
+    /* New styles for fraction display */
+    .fraction {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      margin: 0 2px;
+    }
+    .fraction .top {
+      display: block;
+      border-bottom: 1px solid #000;
+      padding: 0 2px;
+    }
+    .fraction .bottom {
+      display: block;
+      padding: 0 2px;
+    }
+    /* Style for star counter and message */
+    #starCounter {
+      font-size: 20px;
+      margin: 10px;
+    }
+    #message {
+      font-size: 20px;
+      margin: 10px;
+      height: 24px; /* reserve space */
+    }
   </style>
 </head>
 <body>
   <h1>Mixed Numbers to Improper Fractions</h1>
+  <div id="starCounter">Stars: 0</div>
+  <div id="message"></div>
   <div id="question"></div>
   <div class="visual" id="visual"></div>
   <div class="choices" id="choices"></div>
 
   <script>
+    var starCount = 0;
+
+    // Helper function to update the star counter display
+    function updateStarCounter() {
+      document.getElementById("starCounter").innerHTML = "Stars: " + starCount;
+    }
+
+    // Helper function to render a fraction in vertical layout
+    function renderFraction(numerator, denominator) {
+      return '<span class="fraction"><span class="top">' + numerator + '</span><span class="bottom">' + denominator + '</span></span>';
+    }
+
+    // Generates a question and displays the mixed number using vertical fraction display.
     function generateQuestion() {
+      // Clear any previous message.
+      document.getElementById("message").innerHTML = "";
+      
       var whole = Math.floor(Math.random() * 5) + 1;
       var denominator = Math.floor(Math.random() * 5) + 2;
       var numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
-      var correctFraction = (whole * denominator + numerator) + "/" + denominator;
+      var totalNumerator = whole * denominator + numerator;
+      var correctFraction = totalNumerator + "/" + denominator;
 
+      // Use renderFraction to display the mixed number fraction portion.
       document.getElementById("question").innerHTML =
-        "Convert <b>" + whole + " " + numerator + "/" + denominator + "</b> to an improper fraction:";
+        "Convert <b>" + whole + " " + renderFraction(numerator, denominator) + "</b> to an improper fraction:";
 
       generateVisual(whole, numerator, denominator);
 
@@ -87,7 +133,7 @@
 
       while (choices.length < 4) {
         var offset = Math.floor(Math.random() * 7) - 3;
-        var newNumerator = (whole * denominator + numerator) + offset;
+        var newNumerator = totalNumerator + offset;
         if (newNumerator > 0) {
           var wrong = newNumerator + "/" + denominator;
           if (choices.indexOf(wrong) === -1) {
@@ -103,16 +149,25 @@
 
       for (var i = 0; i < choices.length; i++) {
         var choice = choices[i];
+        // Convert the "x/y" string to vertical fraction using renderFraction.
+        var parts = choice.split("/");
+        var displayFraction = renderFraction(parts[0], parts[1]);
         var btn = document.createElement("div");
         btn.className = "choice";
-        btn.innerHTML = choice;
+        btn.innerHTML = displayFraction;
         btn.onclick = (function(selected, correct) {
           return function() {
             if (selected === correct) {
               this.classList.add("correct");
+              document.getElementById("message").innerHTML = "Correct! 🎉";
+              starCount++;
+              updateStarCounter();
               setTimeout(generateQuestion, 1000);
             } else {
               this.classList.add("incorrect");
+              document.getElementById("message").innerHTML = "Incorrect! ❌";
+              starCount--;
+              updateStarCounter();
             }
           };
         })(choice, correctFraction);
@@ -159,6 +214,7 @@
     }
 
     window.onload = function() {
+      updateStarCounter();
       generateQuestion();
     };
   </script>
