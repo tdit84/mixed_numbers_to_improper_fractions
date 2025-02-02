@@ -78,35 +78,41 @@
       display: block;
       padding: 0 2px;
     }
-    /* Style for star counter and message */
-    #starCounter {
+    /* Feedback container styles */
+    #feedback {
       font-size: 20px;
-      margin: 10px;
+      margin: 20px;
+    }
+    #starCounter {
+      display: inline-block;
+      margin-right: 20px;
     }
     #message {
-      font-size: 20px;
-      margin: 10px;
+      display: inline-block;
       height: 24px; /* reserve space */
     }
   </style>
 </head>
 <body>
   <h1>Mixed Numbers to Improper Fractions</h1>
-  <div id="starCounter">Stars: 0</div>
-  <div id="message"></div>
   <div id="question"></div>
   <div class="visual" id="visual"></div>
   <div class="choices" id="choices"></div>
-
+  <!-- Feedback area moved below the choices -->
+  <div id="feedback">
+    <span id="starCounter">⭐ 0</span>
+    <span id="message"></span>
+  </div>
+  
   <script>
     var starCount = 0;
 
-    // Helper function to update the star counter display
+    // Helper function to update the star counter display with star emoji.
     function updateStarCounter() {
-      document.getElementById("starCounter").innerHTML = "Stars: " + starCount;
+      document.getElementById("starCounter").innerHTML = "⭐ " + starCount;
     }
 
-    // Helper function to render a fraction in vertical layout
+    // Helper function to render a fraction in vertical layout.
     function renderFraction(numerator, denominator) {
       return '<span class="fraction"><span class="top">' + numerator + '</span><span class="bottom">' + denominator + '</span></span>';
     }
